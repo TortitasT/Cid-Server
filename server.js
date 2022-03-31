@@ -1,4 +1,5 @@
 const { Server } = require("socket.io");
+const Player = require("./classes/player.js");
 
 // Socket io configuration
 const port = process.env.PORT || 28962;
@@ -6,11 +7,7 @@ const io = new Server();
 
 // List of players connected and their info
 let players = [];
-class Player {
-  constructor(id) {
-    this.id = id;
-  }
-}
+
 // Gets a player from the above list
 function getPlayer(id) {
   for (let i = 0; i < players.length; i++) {
@@ -23,14 +20,28 @@ function getPlayer(id) {
 // Connection logic
 io.on("connection", (socket) => {
   // Add player to the list of players
-  players.push(new Player(socket.id, "noname"));
   console.log(
     `Player ${socket.id} connected from ip: ${socket.request.remoteAddress}`
   );
 
   // Recieve player character information
-  socket.on("config", (character) => {
-    getPlayer(socket.id).character = character;
+  socket.on("config", (response) => {
+    players.push(new Player(socket.id, response.character, response.pos));
+
+    socket.emit("registered", {
+      id: socket.id,
+      character: response.character,
+      pos: response.pos,
+    });
+  });
+
+  // Update on tick
+  socket.on("update", (response) => {
+    const player = getPlayer(socket.id);
+    if (player) {
+      player.pos = response.pos;
+      socket.emit("updated", { id: player.id, pos: player.pos });
+    }
   });
 
   // Manage disconnection of players
@@ -48,8 +59,8 @@ setInterval(() => {
     console.log(`id: ${players[i].id}`);
     console.log(`name: ${players[i].character.name}`);
     console.log(`level: ${players[i].character.level}`);
-    console.log(`pos: ${players[i].character.pos.x}, ${players[i].character.pos.y}`);
-    console.log(`\n`)
+    console.log(`pos: ${players[i].pos.x}, ${players[i].pos.y}`);
+    console.log(`\n`);
   }
 }, 500);
 
