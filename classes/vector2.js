@@ -9,6 +9,10 @@ module.exports = class Vector2 {
   magnitude() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
+  normalize() {
+    const magnitude = this.magnitude();
+    return new Vector2(this.x / magnitude, this.y / magnitude);
+  }
   static add(v1, v2) {
     return new Vector2(v1.x + v2.x, v1.y + v2.y);
   }

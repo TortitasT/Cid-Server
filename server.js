@@ -11,7 +11,7 @@ const io = new Server();
 const configs = {
   port: process.env.PORT || 28962,
   players: [],
-  log: "",
+  log: Chalk.blue("Start of log\n"),
 };
 
 function print(text) {
@@ -50,13 +50,17 @@ io.on("connection", (socket) => {
   // Update on tick
   socket.on("update", (response) => {
     const player = getPlayer(socket.id);
-    const distance = Vector2.distance(player?.pos, response.pos);
 
-    if (distance <= 1 && distance > 0) { // Check if player has moved an acceptable ammount
-      player.pos = response.pos;
-      socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
-    } else {
-      // Kick player??
+    if (player) { // If the player is initialized
+      const distance = Vector2.distance(player?.pos, response.pos);
+
+      if (distance <= 1 && distance > 0) {
+        // Check if player has moved an acceptable ammount
+        player.pos = response.pos;
+        socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
+      } else {
+        // Kick player??
+      }
     }
   });
 

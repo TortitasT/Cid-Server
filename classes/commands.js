@@ -2,8 +2,10 @@ const Chalk = require("chalk");
 
 module.exports = function input(command, configs) {
   switch (command) {
+    case "exit":
     case "quit":
       process.exit();
+      break;
     case "status":
       console.log(`\n`);
       console.log(Chalk.green(`Server running on port: ${configs.port}`));
@@ -13,7 +15,9 @@ module.exports = function input(command, configs) {
         console.log(`id: ${configs.players[i].id}`);
         console.log(`name: ${configs.players[i].character.name}`);
         console.log(`level: ${configs.players[i].character.level}`);
-        console.log(`pos: ${configs.players[i].pos.x}, ${configs.players[i].pos.y}`);
+        console.log(
+          `pos: ${configs.players[i].pos.x}, ${configs.players[i].pos.y}`
+        );
         console.log(`\n`);
       }
       break;
