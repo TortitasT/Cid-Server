@@ -2,6 +2,7 @@ const { Server } = require("socket.io");
 const stdin = process.openStdin();
 const Chalk = require("chalk");
 const Player = require("./classes/player.js");
+const Vector2 = require("./classes/vector2.js");
 
 // Socket io configuration
 const io = new Server();
@@ -11,7 +12,7 @@ const configs = {
   port: process.env.PORT || 28962,
   players: [],
   log: "",
-}
+};
 
 function print(text) {
   configs.log += text;
@@ -49,15 +50,19 @@ io.on("connection", (socket) => {
   // Update on tick
   socket.on("update", (response) => {
     const player = getPlayer(socket.id);
-    if (player) {
+    const distance = Vector2.distance(player?.pos, response.pos);
+
+    if (distance <= 1 && distance > 0) { // Check if player has moved an acceptable ammount
       player.pos = response.pos;
       socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
+    } else {
+      // Kick player??
     }
   });
 
   // Manage disconnection of players
   socket.on("disconnect", () => {
-    configs.players.splice(players.indexOf(getPlayer(socket.id)), 1);
+    configs.players.splice(configs.players.indexOf(getPlayer(socket.id)), 1);
     print(Chalk.yellow(`Player ${socket.id} disconnected \n`));
 
     socket.broadcast.emit("disconnected", { id: socket.id });
