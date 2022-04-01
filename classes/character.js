@@ -1,5 +1,10 @@
+const Inventory = require("./inventory.js");
+
 module.exports = class Character {
-  constructor() {
-    (this.name = "Name"), (this.level = 0), (this.pos = new Vector2(0, 0));
+  constructor(character) {
+    this.name = character.name,
+    this.level = character.level,
+    this.levelProgress = character.levelProgress,
+    this.inventory = new Inventory(character.inventory);
   }
 };

@@ -11,6 +11,19 @@ const pos = {
   x: 0,
   y: 0,
 };
+let id = 0;
+
+// List of players connected and their info
+let players = [];
+
+// Gets a player from the above list
+function getPlayer(id) {
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].id === id) {
+      return players[i];
+    }
+  }
+}
 
 const socket = io(`ws://${ip}:${port}`);
 
@@ -21,16 +34,44 @@ socket.on("connect", () => {
   console.log("Connected as:");
   console.log(socket.id);
 
-  socket.emit("config", { character: character, pos: pos });
+  id = socket.id;
+  socket.emit("config", { id: socket.id, character: character, pos: pos });
 
+  // Walk mock
   setTimeout(() => {
     setInterval(() => {
       pos.x++;
       socket.emit("update", { pos: pos });
-    }, 50);
+    }, 1000);
   }, 500);
 
+  socket.on("currentPlayers", (response) => {
+    players = response.players;
+
+    console.log(players);
+  });
+
+  socket.on("registered", (response) => {
+    players.push(response.player);
+    console.log(`Registered new user as: ${response.player.id}`);
+
+    console.log(players);
+  });
+
+  socket.on("updated", (response) => {
+    // console.log(`Updated user: ${response.id}`);
+    getPlayer(response.id).pos = response.pos;
+  });
+
+  socket.on("disconnected", (response) => {
+    // console.log(`Updated user: ${response.id}`);
+    players.splice(players.indexOf(getPlayer(response.id)), 1);
+
+    console.log('Player disconnected');
+    console.log(players);
+  });
+
   socket.on("connect_error", (err) => {
-    console.log(`connect_error due to ${err.message}`);
+    console.log(`Connection error: ${err.message}`);
   });
 });

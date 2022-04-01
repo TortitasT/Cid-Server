@@ -1,9 +1,11 @@
 const shortID = require("shortid");
+const Vector2 = require("./vector2.js");
+const Character = require("./character.js");
 
 module.exports = class Player {
-  constructor(id, character, pos) {
-    this.id = id;
-    this.character = character;
-    this.pos = pos
+  constructor(player) {
+    this.id = player.id;
+    this.character = new Character(player.character);
+    this.pos = player.pos;
   }
 };
