@@ -4,25 +4,25 @@ const Chalk = require("chalk");
 const Player = require("./classes/player.js");
 
 // Socket io configuration
-const port = process.env.PORT || 28962;
 const io = new Server();
 
-// List of players connected and their info
-let players = [];
-
-// Log of events
-let log = "";
+// Multiple configs
+const configs = {
+  port: process.env.PORT || 28962,
+  players: [],
+  log: "",
+}
 
 function print(text) {
-  log += text;
+  configs.log += text;
   console.log(text);
 }
 
 // Gets a player from the above list
 function getPlayer(id) {
-  for (let i = 0; i < players.length; i++) {
-    if (players[i].id === id) {
-      return players[i];
+  for (let i = 0; i < configs.players.length; i++) {
+    if (configs.players[i].id === id) {
+      return configs.players[i];
     }
   }
 }
@@ -39,10 +39,10 @@ io.on("connection", (socket) => {
   // Recieve player character information
   socket.on("config", (response) => {
     newPlayer = new Player(response);
-    players.push(newPlayer);
+    configs.players.push(newPlayer);
 
     // Send the current players to the new player and tell the rest that a new player has joined
-    socket.emit("currentPlayers", { players: players });
+    socket.emit("currentPlayers", { players: configs.players });
     socket.broadcast.emit("registered", { player: newPlayer });
   });
 
@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
 
   // Manage disconnection of players
   socket.on("disconnect", () => {
-    players.splice(players.indexOf(getPlayer(socket.id)), 1);
+    configs.players.splice(players.indexOf(getPlayer(socket.id)), 1);
     print(Chalk.yellow(`Player ${socket.id} disconnected \n`));
 
     socket.broadcast.emit("disconnected", { id: socket.id });
@@ -65,44 +65,12 @@ io.on("connection", (socket) => {
 });
 
 // Commands definitions
-function input(command) {
-  switch (command) {
-    case "quit":
-      process.exit();
-    case "status":
-      console.log(`\n`);
-      console.log(Chalk.green(`Server running on port: ${port}`));
-      console.log(Chalk.blue(`Players (${players.length}):`));
-      console.log(`\n`);
-      for (let i = 0; i < players.length; i++) {
-        console.log(`id: ${players[i].id}`);
-        console.log(`name: ${players[i].character.name}`);
-        console.log(`level: ${players[i].character.level}`);
-        console.log(`pos: ${players[i].pos.x}, ${players[i].pos.y}`);
-        console.log(`\n`);
-      }
-      break;
-    case "help":
-      console.log(`\n`);
-      console.log("Commands available:");
-      console.log("- help");
-      console.log("- quit");
-      console.log("- status");
-      console.log(`\n`);
-      break;
-    case "log":
-      console.log(`\n`);
-      console.log(log);
-      break;
-    case "clear":
-      console.clear();
-  }
-}
+const input = require("./classes/commands.js");
 
 // Listen for commands
 stdin.addListener("data", function (d) {
-  input(d.toString().trim().toLowerCase());
+  input(d.toString().trim().toLowerCase(), configs);
 });
 
 // Listen port
-io.listen(port);
+io.listen(configs.port);
