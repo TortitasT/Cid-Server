@@ -53,13 +53,12 @@ socket.on("connect", () => {
 
   socket.on("registered", (response) => {
     players.push(response.player);
-    console.log(`Registered new user as: ${response.player.id}`);
+    console.log(`Player ${response.player.character.name} connected`);
 
     console.log(players);
   });
 
   socket.on("updated", (response) => {
-    // console.log(`Updated user: ${response.id}`);
     getPlayer(response.id).pos = response.pos;
   });
 
@@ -67,7 +66,7 @@ socket.on("connect", () => {
     // console.log(`Updated user: ${response.id}`);
     players.splice(players.indexOf(getPlayer(response.id)), 1);
 
-    console.log('Player disconnected');
+    console.log(`Player ${response.name} disconnected`);
     console.log(players);
   });
 
@@ -75,3 +74,13 @@ socket.on("connect", () => {
     console.log(`Connection error: ${err.message}`);
   });
 });
+
+setInterval(() => {
+  for (let i = 0; i < players.length; i++) {
+    console.log(`id: ${players[i].id}`);
+    console.log(`name: ${players[i].character.name}`);
+    console.log(`level: ${players[i].character.level}`);
+    console.log(`pos: ${players[i].pos.x}, ${players[i].pos.y}`);
+    console.log(`\n`);
+  }
+}, 1000);
