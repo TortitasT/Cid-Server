@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
 
   // Manage disconnection of players
   socket.on("disconnect", () => {
-    const name = getPlayer(socket.id).character.name;
+    const name = getPlayer(socket.id)?.character.name || 'Unknown';
     configs.players.splice(configs.players.indexOf(getPlayer(socket.id)), 1);
     print(Chalk.yellow(`Player ${name} (${socket.id}) disconnected \n`));
 

@@ -25,7 +25,7 @@ function getPlayer(id) {
   }
 }
 
-const socket = io(`ws://${ip}:${port}`);
+const socket = io(`ws://${ip}:${port}/`);
 
 console.log(`Trying to connect to ${ip}:${port}`);
 
