@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
     if (player) {
       const distance = Vector2.distance(player?.pos, response.pos);
 
-      // Check if player has moved an acceptable ammount
+      // Check if player has moved an acceptable amount
       if (distance <= 1 && distance > 0) {
         player.pos = response.pos;
         socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
 
   // Manage disconnection of players
   socket.on("disconnect", () => {
-    const name = getPlayer(socket.id)?.character.name || 'Unknown';
+    const name = getPlayer(socket.id)?.character.name || "Unknown";
     configs.players.splice(configs.players.indexOf(getPlayer(socket.id)), 1);
     print(Chalk.yellow(`Player ${name} (${socket.id}) disconnected \n`));
 
