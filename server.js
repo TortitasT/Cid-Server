@@ -16,7 +16,11 @@ const configs = {
 
 // Prints text on screen and logs it
 function print(text) {
-  configs.log += text;
+  const currentDate = new Date();
+
+  configs.log += `[${Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+    currentDate.getDay()
+  )} ${currentDate.getDate()}/${currentDate.getMonth()}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}] ${text}\n`;
   console.log(text);
 }
 
@@ -36,7 +40,7 @@ io.on("connection", (socket) => {
     newPlayer = new Player(response);
     print(
       Chalk.cyan(
-        `Player ${newPlayer.character.name} (${socket.id}) connected from ip: ${socket.conn.remoteAddress}\n`
+        `Player ${newPlayer.character.name} (${socket.id}) connected from ip: ${socket.conn.remoteAddress}`
       )
     );
 
@@ -69,7 +73,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const name = getPlayer(socket.id)?.character.name || "Unknown";
     configs.players.splice(configs.players.indexOf(getPlayer(socket.id)), 1);
-    print(Chalk.yellow(`Player ${name} (${socket.id}) disconnected \n`));
+    print(Chalk.yellow(`Player ${name} (${socket.id}) disconnected`));
 
     socket.broadcast.emit("disconnected", { id: socket.id, name: name });
   });

@@ -32,6 +32,7 @@ module.exports = function input(command, configs) {
     case "log":
       console.log(`\n`);
       console.log(configs.log);
+      console.log(Chalk.blue("End of log"));
       break;
     case "clear":
       console.clear();
