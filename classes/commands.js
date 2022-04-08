@@ -25,8 +25,10 @@ module.exports = function input(command, configs) {
       console.log(`\n`);
       console.log("Commands available:");
       console.log("- help");
-      console.log("- quit");
+      console.log("- quit or exit");
       console.log("- status");
+      console.log("- log");
+      console.log("- clear");
       console.log(`\n`);
       break;
     case "log":
