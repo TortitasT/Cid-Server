@@ -3,6 +3,8 @@ const stdin = process.openStdin();
 const Chalk = require("chalk");
 const Player = require("./classes/player.js");
 const Vector2 = require("./classes/vector2.js");
+const input = require("./classes/commands.js");
+require("dotenv").config();
 
 // Socket io configuration
 const io = new Server();
@@ -11,6 +13,7 @@ const io = new Server();
 const configs = {
   port: process.env.PORT || 28962,
   players: [],
+  max_players: process.env.MAXPLAYERS || 10,
   log: Chalk.blue("Start of log\n"),
 };
 
@@ -32,6 +35,8 @@ function getPlayer(id) {
     }
   }
 }
+
+input("status", configs); // Print status on launch
 
 // Connection logic
 io.on("connection", (socket) => {
@@ -78,9 +83,6 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("disconnected", { id: socket.id, name: name });
   });
 });
-
-// Commands definitions
-const input = require("./classes/commands.js");
 
 // Listen for commands
 stdin.addListener("data", function (d) {

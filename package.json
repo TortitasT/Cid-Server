@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.2",
+    "dotenv": "^16.0.0",
     "prompt-sync": "^4.2.0",
     "shortid": "^2.2.16",
     "socket.io": "^4.4.1",
