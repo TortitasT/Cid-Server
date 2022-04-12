@@ -13,7 +13,7 @@ const io = new Server();
 const configs = {
   port: process.env.PORT || 28962,
   players: [],
-  max_players: process.env.MAXPLAYERS || 2,
+  max_players: process.env.MAXPLAYERS || 4,
   log: Chalk.blue("Start of log\n"),
 };
 
@@ -42,7 +42,7 @@ input("status", configs); // Print status on launch
 io.on("connection", (socket) => {
   // If server is full disconnect
   if (configs.players.length >= configs.max_players) {
-    socket.emit("full");
+    socket.to(socket.id).emit("full");
     socket.disconnect();
     print(Chalk.red("Player tried to join but server is full"));
     return;
@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
     );
 
     // Send the current players to the new player and tell the rest that a new player has joined
-    socket.emit("currentPlayers", { players: configs.players });
+    socket.to(socket.id).emit("currentPlayers", { players: configs.players });
     socket.broadcast.emit("registered", { player: newPlayer });
 
     // Add player to db
