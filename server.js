@@ -42,7 +42,7 @@ input("status", configs); // Print status on launch
 io.on("connection", (socket) => {
   // If server is full disconnect
   if (configs.players.length >= configs.max_players) {
-    socket.to(socket.id).emit("full");
+    socket.emit("full");
     socket.disconnect();
     print(Chalk.red("Player tried to join but server is full"));
     return;
@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
     );
 
     // Send the current players to the new player and tell the rest that a new player has joined
-    socket.to(socket.id).emit("currentPlayers", { players: configs.players });
+    socket.emit("currentPlayers", { players: configs.players });
     socket.broadcast.emit("registered", { player: newPlayer });
 
     // Add player to db
