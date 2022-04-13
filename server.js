@@ -73,12 +73,12 @@ io.on("connection", (socket) => {
       const distance = Vector2.distance(player?.pos, response.pos);
 
       // Check if player has moved an acceptable amount
-      // if (distance <= 1 && distance > 0) {
-      player.pos = response.pos;
-      socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
-      // } else {
-      // Kick player??
-      // }
+      if (distance > 0) {
+        player.pos = response.pos;
+        socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
+        // } else {
+        // Kick player??
+      }
     }
   });
 
