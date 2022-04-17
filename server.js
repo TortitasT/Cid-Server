@@ -9,7 +9,7 @@ require("dotenv").config();
 // Socket io configuration
 const io = new Server();
 
-// Multiple configs
+// Configs
 const configs = {
   port: process.env.PORT || 28962,
   players: [],
@@ -36,8 +36,6 @@ function getPlayer(id) {
   }
 }
 
-input("status", configs); // Print status on launch
-
 // Connection logic
 io.on("connection", (socket) => {
   // If server is full disconnect
@@ -48,7 +46,7 @@ io.on("connection", (socket) => {
     return;
   }
 
-  // Recieve player character information
+  // Receive player character information
   socket.on("config", (response) => {
     newPlayer = new Player(response);
     print(
@@ -72,12 +70,10 @@ io.on("connection", (socket) => {
     if (player) {
       const distance = Vector2.distance(player?.pos, response.pos);
 
-      // Check if player has moved an acceptable amount
+      // Check if player has moved
       if (distance > 0) {
         player.pos = response.pos;
         socket.broadcast.emit("updated", { id: player.id, pos: player.pos });
-        // } else {
-        // Kick player??
       }
     }
   });
@@ -99,3 +95,6 @@ stdin.addListener("data", function (d) {
 
 // Listen port
 io.listen(configs.port);
+
+// Print status on launch
+input("status", configs);
